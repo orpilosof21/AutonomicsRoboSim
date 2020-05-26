@@ -48,7 +48,8 @@ public class GameManagerScript : MonoBehaviour
         Debug.Log("Finish");
         logfile += "\n\n\n";
         logfile += ParseTheGridData(graph.getData());
-        System.IO.File.WriteAllText(@"C:\Users\Public\TestFolder\LogFile_" + GetTimestamp(DateTime.Now) + ".txt", logfile);
+        System.IO.Directory.CreateDirectory(@"C:\Users\Public\AutonomicLogs");
+        System.IO.File.WriteAllText(@"C:\Users\Public\AutonomicLogs\LogFile_" + GetTimestamp(DateTime.Now) + ".txt", logfile);
     }
 
     private string ParseTheGridData(string[,] v)
