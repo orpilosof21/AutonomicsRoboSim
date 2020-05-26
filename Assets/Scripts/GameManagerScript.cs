@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
+
 
 public class GameManagerScript : MonoBehaviour
 {
@@ -31,15 +33,36 @@ public class GameManagerScript : MonoBehaviour
         bfsFlag = false;
         CreateGraph();
         graph.OnLocationChanged.AddListener(myAction);
-        StartAlgo();
+        if (!(StaticVars.startRow == StaticVars.finishRow && StaticVars.startCol == StaticVars.finishCol))
+        {
+            StartAlgo();
+        }
         FinishTheRun();
 
     }
 
+
+
     private void FinishTheRun()
     {
         Debug.Log("Finish");
+        logfile += "\n\n\n";
+        logfile += ParseTheGridData(graph.getData());
         System.IO.File.WriteAllText(@"C:\Users\Public\TestFolder\LogFile_" + GetTimestamp(DateTime.Now) + ".txt", logfile);
+    }
+
+    private string ParseTheGridData(string[,] v)
+    {
+        string str = "";
+        int count = 0;
+        foreach (var item in v)
+        {
+            str += item;
+            count++;
+            if (count % graph.getRows() == 0)
+                str += "\n";
+        }
+        return str;
     }
 
     public static String GetTimestamp(DateTime value)
@@ -55,6 +78,10 @@ public class GameManagerScript : MonoBehaviour
         if (result == 1)
         {
             StaticVars.hasReachTarget = true;
+        }
+        if (result == -1)
+        {
+            graph.addObstacle(StaticVars.curRow, StaticVars.curCol);
         }
     }
 

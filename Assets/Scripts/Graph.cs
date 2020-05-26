@@ -16,6 +16,7 @@ public class Graph
     private int columns;
     private int rows;
     private int tiles;
+    private bool obstacleHandle;
     private LinkedList<int>[] adj; //Adjacency Lists
     private string[,] data;
     private Dictionary<int, KeyValuePair<int, int>> numberToCordMap;
@@ -38,9 +39,11 @@ public class Graph
     public Graph(int columns, int rows, string[,] data)
     {
         OnLocationChanged = new MyIntEvent();
+        this.obstacleHandle = false;
         this.columns = columns;
         this.rows = rows;
         this.data = data;
+        ClearData();
         this.tiles = rows * columns;
         this.adj = new LinkedList<int>[tiles];
         for (int i = 0; i < tiles; ++i)
@@ -49,6 +52,20 @@ public class Graph
         }
         this.fillTheMap();
         this.CreateAdjacencies();
+    }
+
+    private void ClearData()
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                if (this.data[i, j] == "X")
+                {
+                    this.data[i, j] = "O";
+                }
+            }
+        }
     }
 
     void fillTheMap()
@@ -85,6 +102,17 @@ public class Graph
         addEdge(row, col, row, col - 1);
     }
 
+    void RemoveAdjacencies(int row, int col)
+    {
+        foreach (var item in adj)
+        {
+            if (item.Contains(row * columns + col)){
+                item.Remove(row * columns + col);
+            }
+        }
+        adj[row * columns + col].Clear();
+    }
+
     // Function to add an edge into the graph
     void addEdge(int vx, int vy, int wx, int wy)
     {
@@ -98,9 +126,11 @@ public class Graph
         }
     }
 
-    void addObstacle(int row, int col)
+    public void addObstacle(int row, int col)
     {
+        obstacleHandle = true;
         data[row,col] = "X";
+        RemoveAdjacencies(row, col);
     }
 
     public void BFS(int x,  int y, Graph graph)
@@ -147,7 +177,10 @@ public class Graph
                 {
                     KeyValuePair<int, int> current = numberToCordMap[n];
                     MoveToTarget(current.Key, current.Value);
-                    data[current.Key, current.Value] = "V";
+                    if (data[current.Key, current.Value] != "X")
+                    {
+                        data[current.Key, current.Value] = "V";
+                    }
                     visited[n] = true;
 
                 }
@@ -165,6 +198,7 @@ public class Graph
     private void MoveToTarget(int x_target, int y_target)
     {
         CalculateMoveList(x_target, y_target);
+        int prev_x = 0, prev_y = 0;
         var moveList = StaticVars.backtrackMinSol;
         foreach (var item in moveList)
         {
@@ -172,11 +206,14 @@ public class Graph
             {
                 return;
             }
+            prev_x = StaticVars.curRow;
+            prev_y = StaticVars.curCol;
             if (item.Item1>StaticVars.curRow && item.Item2 == StaticVars.curCol)
             {
                 //move Down
                 UpdateCurrentLocation(item.Item1, item.Item2);
                 OnLocationChanged.Invoke(2);
+                CheckForObstacle(prev_x, prev_y);
                 continue;
             }
             if (item.Item1 < StaticVars.curRow && item.Item2 == StaticVars.curCol)
@@ -184,6 +221,7 @@ public class Graph
                 //move Up
                 UpdateCurrentLocation(item.Item1, item.Item2);
                 OnLocationChanged.Invoke(0);
+                CheckForObstacle(prev_x, prev_y);
                 continue;
             }
             if (item.Item1 == StaticVars.curRow && item.Item2 > StaticVars.curCol)
@@ -191,6 +229,7 @@ public class Graph
                 //move Right
                 UpdateCurrentLocation(item.Item1, item.Item2);
                 OnLocationChanged.Invoke(1);
+                CheckForObstacle(prev_x, prev_y);
                 continue;
             }
             if (item.Item1 == StaticVars.curRow && item.Item2 < StaticVars.curCol)
@@ -198,8 +237,18 @@ public class Graph
                 //move Left
                 UpdateCurrentLocation(item.Item1, item.Item2);
                 OnLocationChanged.Invoke(3);
+                CheckForObstacle(prev_x, prev_y);
                 continue;
             }
+        }
+    }
+
+    private void CheckForObstacle(int prev_x, int prev_y)
+    {
+        if (obstacleHandle)
+        {
+            UpdateCurrentLocation(prev_x, prev_y);
+            obstacleHandle = false;
         }
     }
 
