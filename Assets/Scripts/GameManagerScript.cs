@@ -26,14 +26,20 @@ public class GameManagerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StaticVars.hasReachTarget = false;
         logfile = "";
         bfsFlag = false;
         CreateGraph();
         graph.OnLocationChanged.AddListener(myAction);
         StartAlgo();
-        Debug.Log("Finish");
-        System.IO.File.WriteAllText(@"C:\Users\Public\TestFolder\LogFile_"+ GetTimestamp(DateTime.Now) + ".txt", logfile);
+        FinishTheRun();
 
+    }
+
+    private void FinishTheRun()
+    {
+        Debug.Log("Finish");
+        System.IO.File.WriteAllText(@"C:\Users\Public\TestFolder\LogFile_" + GetTimestamp(DateTime.Now) + ".txt", logfile);
     }
 
     public static String GetTimestamp(DateTime value)
@@ -45,7 +51,36 @@ public class GameManagerScript : MonoBehaviour
     {
         //StartCoroutine(Mover(n));
         int result = _robotScript.Move(n);
-        logfile += "The robot is at " + StaticVars.curRow + "," + StaticVars.curCol + "\n";
+        WriteToLogFile(result);
+        if (result == 1)
+        {
+            StaticVars.hasReachTarget = true;
+        }
+    }
+
+    private void WriteToLogFile(int result)
+    {
+        switch (result)
+        {
+            case -3:
+                logfile += "UNEXPECTED ERROR\n";
+                break;
+            case -2:
+                logfile += "Out of bounds at: " + StaticVars.curRow + "," + StaticVars.curCol + "\n";
+                break;
+            case -1:
+                logfile += "The robot has encountred an obstacle at: " + StaticVars.curRow + "," + StaticVars.curCol + "\n";
+                break;
+            case 0:
+                logfile += "The robot has successfully moved to: " + StaticVars.curRow + "," + StaticVars.curCol + "\n";
+                break;
+            case 1:
+                logfile += "The robot has reached the target at: " + StaticVars.curRow + "," + StaticVars.curCol + "\n";
+                break;
+            default:
+                logfile += "UNEXPECTED CODE\n";
+                break;
+        }
     }
 
     IEnumerator waitFor1Seconds()

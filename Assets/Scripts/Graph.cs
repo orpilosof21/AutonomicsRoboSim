@@ -137,6 +137,10 @@ public class Graph
             var temp_iter = adj[s];
             while (temp_iter.Count != 0)
             {
+                if (StaticVars.hasReachTarget)
+                {
+                    return;
+                }
                 int n = temp_iter.First.Value; // the next vertex to visit
                 temp_iter.RemoveFirst();
                 if (!visited[n])
@@ -164,32 +168,36 @@ public class Graph
         var moveList = StaticVars.backtrackMinSol;
         foreach (var item in moveList)
         {
+            if (StaticVars.hasReachTarget)
+            {
+                return;
+            }
             if (item.Item1>StaticVars.curRow && item.Item2 == StaticVars.curCol)
             {
                 //move Down
-                OnLocationChanged.Invoke(2);
                 UpdateCurrentLocation(item.Item1, item.Item2);
+                OnLocationChanged.Invoke(2);
                 continue;
             }
             if (item.Item1 < StaticVars.curRow && item.Item2 == StaticVars.curCol)
             {
                 //move Up
-                OnLocationChanged.Invoke(0);
                 UpdateCurrentLocation(item.Item1, item.Item2);
+                OnLocationChanged.Invoke(0);
                 continue;
             }
             if (item.Item1 == StaticVars.curRow && item.Item2 > StaticVars.curCol)
             {
                 //move Right
-                OnLocationChanged.Invoke(1);
                 UpdateCurrentLocation(item.Item1, item.Item2);
+                OnLocationChanged.Invoke(1);
                 continue;
             }
             if (item.Item1 == StaticVars.curRow && item.Item2 < StaticVars.curCol)
             {
                 //move Left
-                OnLocationChanged.Invoke(3);
                 UpdateCurrentLocation(item.Item1, item.Item2);
+                OnLocationChanged.Invoke(3);
                 continue;
             }
         }

@@ -20,5 +20,7 @@ public class StaticVars : MonoBehaviour
     public static int backtrackMinCount;
     public static List<ValueTuple<int, int>> backtrackMinSol;
 
+    public static bool hasReachTarget;
+
     public static GameObject startTile;
 }
