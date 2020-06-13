@@ -8,5 +8,8 @@ What work remains:
 2.5. Small bug fix - when outputing the grid, switch % by columns, not rows
 
 3. Fix the GUI that the car will move accordingly
-4. Add DFS
+4. Add DFS - DONE
+
+4.5 Fix bug, when pressing "esc" key. After running BFS, and pressing esc, and then running DFS.
+
 5. Add A*
