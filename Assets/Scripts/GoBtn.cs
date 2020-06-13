@@ -17,9 +17,9 @@ public class GoBtn : MonoBehaviour
     [SerializeField]
     private InputField colFinish;
     [SerializeField]
-    private InputField gridMap;
-    [SerializeField]
     private Dropdown algoSelect;
+    [SerializeField]
+    private InputField gridMap;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,8 +33,8 @@ public class GoBtn : MonoBehaviour
         StaticVars.startCol = int.Parse(colStart.text);
         StaticVars.finishRow = int.Parse(rowFinish.text);
         StaticVars.finishCol = int.Parse(colFinish.text);
-        StaticVars.grid = gridMap.text;
         StaticVars.algo = algoSelect.options[algoSelect.value].text;
+        StaticVars.grid = gridMap.text;
         SceneManager.LoadScene(1);
     }
 }

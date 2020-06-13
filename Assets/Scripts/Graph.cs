@@ -133,6 +133,51 @@ public class Graph
         RemoveAdjacencies(row, col);
     }
 
+    public void DFS(int x,int y, Graph graph)
+    {
+        // Mark all the vertices as not visited 
+        // (set as false by default in c#)  
+        bool[] visited = new bool[columns * rows];
+        for (int i = 0; i < columns * rows; i++)
+        {
+            visited[i] = false;
+        }
+
+        // Call the recursive helper function  
+        // to print DFS traversal  
+        DFSUtil(x,y, visited);
+    }
+
+    void DFSUtil(int x,int y, bool[] visited)
+    {
+        // Mark the current node as visited 
+        // and print it  
+        int s = x * rows + y;
+        visited[s] = true;
+        MoveToTarget(x, y);
+        if (data[x, y] == "X")
+        {
+            return; 
+        }
+        data[x, y] = "V";
+
+        // Recur for all the vertices  
+        // adjacent to this vertex  
+        LinkedList<int> vList = new LinkedList<int>(adj[s]);
+        foreach (var n in vList)
+        {
+            if (StaticVars.hasReachTarget)
+            {
+                return;
+            }
+            if (!visited[n])
+            {
+                KeyValuePair<int, int> current = numberToCordMap[n];
+                DFSUtil(current.Key,current.Value, visited);
+            }
+        }
+    }
+
     public void BFS(int x,  int y, Graph graph)
     {
         int s = x * rows + y;

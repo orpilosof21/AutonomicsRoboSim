@@ -139,15 +139,43 @@ public class GameManagerScript : MonoBehaviour
     {
         if (Input.GetKeyDown("escape"))
         {
+            ResetStaticVars();
             SceneManager.LoadScene(0);
         }
     }
+
+    private void ResetStaticVars()
+    {
+        StaticVars.startRow = -1;
+        StaticVars.startCol = -1;
+        StaticVars.finishRow = -1;
+        StaticVars.finishCol = -1;
+        StaticVars.curRow = -1;
+        StaticVars.curCol = -1;
+
+        StaticVars.grid = "";
+        StaticVars.algo = "";
+
+        StaticVars.hasReachTarget = false;
+
+        StaticVars.startTile = null;
+}
 
     private void StartAlgo()
     {
         GameObject robot = (GameObject)Instantiate(robotPrefab);
         _robotScript = robot.GetComponent<robotScript>();
-        graph.BFS(StaticVars.startRow, StaticVars.startCol, graph);
+        switch (StaticVars.algo)
+        {
+            case "BFS":
+                graph.BFS(StaticVars.startRow, StaticVars.startCol, graph);
+                break;
+            case "DFS":
+                graph.DFS(StaticVars.startRow, StaticVars.startCol, graph);
+                break;
+            default:
+                throw new Exception("No Algo");
+        }
     }
 
     private IEnumerator Mover(int direction)
