@@ -60,7 +60,7 @@ public class GameManagerScript : MonoBehaviour
         {
             str += item;
             count++;
-            if (count % graph.getRows() == 0)
+            if (count % graph.getColumns() == 0)
                 str += "\n";
         }
         return str;
